@@ -1,14 +1,16 @@
 {
-  "name": "apebot-mc",
-  "version": "0.1.0",
-  "description": "A minecraft bot for Jungle SMP.",
-  "main": "index.js",
-  "scripts": {
-    "test": "exit"
-  },
-  "author": "Ali Furkan YILDIZ",
-  "license": "MIT",
-  "dependencies": {
-    "mineflayer": "^2.40.1"
-  }
+	"name": "apebot-mc",
+	"version": "0.1.0",
+	"description": "A minecraft bot for Jungle SMP.",
+	"main": "index.js",
+	"scripts": {
+		"load-env": "source .env",
+		"start": "npm run load-env && node .",
+		"test": "npm run load-env && DEBUG=1 nodemon"
+	},
+	"author": "Ali Furkan YILDIZ",
+	"license": "MIT",
+	"dependencies": {
+		"mineflayer": "^2.40.1"
+	}
 }
