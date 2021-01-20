@@ -1,0 +1,11 @@
+{
+  "name": "apebot-mc",
+  "version": "0.1.0",
+  "description": "A minecraft bot for Jungle SMP.",
+  "main": "index.js",
+  "scripts": {
+    "test": "exit"
+  },
+  "author": "Ali Furkan YILDIZ",
+  "license": "MIT"
+}
