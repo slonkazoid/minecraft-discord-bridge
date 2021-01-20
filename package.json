@@ -4,7 +4,6 @@
 	"description": "A minecraft bot for Jungle SMP.",
 	"main": "index.js",
 	"scripts": {
-		"load-env": "bash -c 'source .env'",
 		"start": "node .",
 		"test": "DEBUG=1 nodemon"
 	},
