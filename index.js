@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const { Webhook, MessageBuilder } = require("discord-webhook-node");
-let hook = new Webhook(process.env.HOOK);
+const hook = new Webhook(process.env.HOOK);
 const mineflayer = require("mineflayer");
 const bot = mineflayer.createBot({
 	host: process.env.HOST,
@@ -21,10 +21,8 @@ function onSpawn() {
 	bot.on("chat", (u, s) => {
 		if (!bot.players[u]) return;
 		console.log(u, s);
-		if (hook) {
-			hook.setUsername(u);
-			hook.send(s.replace(/(@everyone)|(@here)|(<@.{0,1}[0-9]{18}>)/g, "[PING]"));
-		}
+		hook.setUsername(u);
+		hook.send(s.replace(/(@everyone)|(@here)|(<@.{0,1}[0-9]{18}>)/g, "[PING]"));
 	});
 }
 function onEnd() {
