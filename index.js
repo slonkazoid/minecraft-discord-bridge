@@ -15,10 +15,10 @@ bot.on("error", (err) => console.error(err));
 bot.once("kicked", (reason) => console.log(reason));
 console.log("BOT STARTED");
 
-function onSpawn() {
+async function onSpawn() {
 	console.log("BOT SPAWNED");
 	rl.on("line", bot.chat);
-	bot.on("chat", (u, s) => {
+	bot.on("chat", async (u, s) => {
 		if (!bot.players[u]) return;
 		let filtered = s
 			.replace(/(@everyone)|(@here)|(<@.{0,1}[0-9]{18}>)/g, "[PING]")
