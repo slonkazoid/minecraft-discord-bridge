@@ -11,6 +11,7 @@
 	"license": "MIT",
 	"dependencies": {
 		"discord-webhook-node": "^1.1.8",
+		"dotenv": "^8.2.0",
 		"mineflayer": "^2.40.1"
 	},
 	"repository": {
