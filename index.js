@@ -20,9 +20,12 @@ function onSpawn() {
 	rl.on("line", bot.chat);
 	bot.on("chat", (u, s) => {
 		if (!bot.players[u]) return;
+		let filtered = s
+			.replace(/(@everyone)|(@here)|(<@.{0,1}[0-9]{18}>)/g, "[PING]")
+			.substr(0, 2000);
 		console.log(u, s);
 		hook.setUsername(u);
-		hook.send(s.replace(/(@everyone)|(@here)|(<@.{0,1}[0-9]{18}>)/g, "[PING]"));
+		hook.send(filtered);
 	});
 }
 function onEnd() {
