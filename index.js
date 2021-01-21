@@ -9,9 +9,12 @@ const bot = mineflayer.createBot({
 const { Webhook, MessageBuilder } = require("discord-webhook-node");
 const hook = new Webhook(process.env.HOOK);
 
-function setSystem() {
+/*function setSystem() {
 	hook.setAvatar();
 	hook.setUsername("<SYSTEM>");
+}*/
+function userEmbed(uuid, username = bot.players[uuid].username) {
+	return new MessageBuilder().setAuthor(username, `https://mc-heads.net/avatar/${uuid}/512`);
 }
 function unsafe_parse(json) {
 	let data;
@@ -21,44 +24,49 @@ function unsafe_parse(json) {
 	return data;
 }
 
-setSystem();
 hook.send("Starting Bot");
 
 const rl = require("readline").createInterface({ input: process.stdin, output: process.stdout });
 bot.once("login", () => {
 	console.log("LOGGED IN");
-	setSystem();
 	hook.send("Logged in to " + process.env.HOST);
 });
 bot.once("spawn", onSpawn);
 bot.once("end", () => {
 	console.log("BOT END");
-	setSystem();
 	hook.send("Bot End");
 	process.exit();
 });
 bot.on("error", (err) => console.error(err));
 bot.once("kicked", (reason) => {
 	console.log(reason);
-	setSystem();
 	hook.send(`Bot Kicked for reason: ${unsafe_parse(reason)?.text || reason}`);
 });
 console.log("BOT STARTED");
 
 async function onSpawn() {
 	console.log("BOT SPAWNED");
-	hook.setUsername("<SYSTEM>");
 	hook.send("Bot Spawned");
 	rl.on("line", bot.chat);
 	bot.on("chat", async (u, s) => {
 		let player = bot.players[u];
 		if (!player) return;
 		let filtered = s
-			.replace(/(@everyone)|(@here)|(<@.{0,1}[0-9]{18}>)/g, "[PING]")
+			//.replace(/(@everyone)|(@here)|(<@.{0,1}[0-9]{18}>)/g, "[PING]")
 			.substr(0, 2000);
 		console.log(u, s);
-		hook.setAvatar(`https://mc-heads.net/avatar/${player.uuid}/512`);
-		hook.setUsername(u);
-		hook.send(filtered);
+		hook.send(userEmbed(player.uuid, u).setDescription(filtered).setColor(0x00ffff));
+	});
+	bot.on("playerJoined", async (p) => {
+		console.log("[+] " + p.username);
+		hook.send(
+			userEmbed(p.uuid, p.username).setDescription("joined the game.").setColor(0x00ff00)
+		);
+	});
+	bot.on("playerLeft", async (p) => {
+		console.log("[-] " + p.username);
+		hook.send(
+			userEmbed(p.uuid, p.username).setDescription("left the game.").setColor(0xff0000)
+		);
 	});
 }
