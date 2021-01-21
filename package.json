@@ -1,30 +1,30 @@
 {
-  "name": "minecraft-discord-bridge",
-  "version": "1.0.0",
-  "description": "A Minecraft to Discord chat bridge.",
-  "main": "index.js",
-  "scripts": {
-    "start": "node .",
-    "test": "DEBUG=1 nodemon"
-  },
-  "author": "Ali Furkan YILDIZ",
-  "license": "MIT",
-  "dependencies": {
-    "discord-webhook-node": "^1.1.8",
-    "mineflayer": "^2.40.1",
-    "node-fetch": "^2.6.1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/uAliFurkanY/minecraft-discord-bridge.git"
-  },
-  "keywords": [
-    "bridge",
-    "minecraft",
-    "discord"
-  ],
-  "bugs": {
-    "url": "https://github.com/uAliFurkanY/minecraft-discord-bridge/issues"
-  },
-  "homepage": "https://github.com/uAliFurkanY/minecraft-discord-bridge#readme"
+	"name": "minecraft-discord-bridge",
+	"version": "1.0.0",
+	"description": "A Minecraft to Discord chat bridge.",
+	"main": "index.js",
+	"scripts": {
+		"start": "node .",
+		"test": "DEBUG=1 nodemon"
+	},
+	"author": "Ali Furkan YILDIZ",
+	"license": "MIT",
+	"dependencies": {
+		"discord-webhook-node": "^1.1.8",
+		"mcdata": "^1.0.9",
+		"mineflayer": "^2.40.1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/uAliFurkanY/minecraft-discord-bridge.git"
+	},
+	"keywords": [
+		"bridge",
+		"minecraft",
+		"discord"
+	],
+	"bugs": {
+		"url": "https://github.com/uAliFurkanY/minecraft-discord-bridge/issues"
+	},
+	"homepage": "https://github.com/uAliFurkanY/minecraft-discord-bridge#readme"
 }
