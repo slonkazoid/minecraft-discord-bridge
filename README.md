@@ -4,6 +4,7 @@ A Minecraft to Discord bridge.
 
 ### TODO
 
--   Skins
--   Auto reconnect
--   Join and leave messges
+-   [x] Skins
+-   [ ] Auto reconnect
+    -   With session storing
+-   [ ] Join and leave messages
