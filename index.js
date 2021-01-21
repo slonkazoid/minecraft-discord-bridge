@@ -7,6 +7,7 @@ const bot = mineflayer.createBot({
 	username: process.env.USER,
 	password: process.env.PASS,
 });
+const skinCache = {};
 const rl = require("readline").createInterface({ input: process.stdin, output: process.stdout });
 bot.once("login", () => console.log("LOGGED IN"));
 bot.once("spawn", onSpawn);
@@ -19,11 +20,13 @@ async function onSpawn() {
 	console.log("BOT SPAWNED");
 	rl.on("line", bot.chat);
 	bot.on("chat", async (u, s) => {
-		if (!bot.players[u]) return;
+		let player = bot.players[u];
+		if (!player) return;
 		let filtered = s
 			.replace(/(@everyone)|(@here)|(<@.{0,1}[0-9]{18}>)/g, "[PING]")
 			.substr(0, 2000);
 		console.log(u, s);
+		hook.setAvatar(`https://mc-heads.net/avatar/${player.uuid}/512`);
 		hook.setUsername(u);
 		hook.send(filtered);
 	});
