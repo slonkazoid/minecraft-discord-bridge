@@ -19,6 +19,7 @@ function onSpawn() {
 	console.log("BOT SPAWNED");
 	rl.on("line", bot.chat);
 	bot.on("chat", (u, s) => {
+		if (!bot.players[u]) return;
 		console.log(u, s);
 		if (hook) {
 			hook.setUsername(u);
