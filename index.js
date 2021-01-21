@@ -7,7 +7,6 @@ const bot = mineflayer.createBot({
 	username: process.env.USER,
 	password: process.env.PASS,
 });
-const skinCache = {};
 const rl = require("readline").createInterface({ input: process.stdin, output: process.stdout });
 bot.once("login", () => console.log("LOGGED IN"));
 bot.once("spawn", onSpawn);
