@@ -1,16 +1,30 @@
 {
-	"name": "apebot-mc",
-	"version": "0.1.0",
-	"description": "A minecraft bot for Jungle SMP.",
-	"main": "index.js",
-	"scripts": {
-		"start": "node .",
-		"test": "DEBUG=1 nodemon"
-	},
-	"author": "Ali Furkan YILDIZ",
-	"license": "MIT",
-	"dependencies": {
-		"discord-webhook-node": "^1.1.8",
-		"mineflayer": "^2.40.1"
-	}
+  "name": "minecraft-discord-bridge",
+  "version": "1.0.0",
+  "description": "A Minecraft to Discord chat bridge.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node .",
+    "test": "DEBUG=1 nodemon"
+  },
+  "author": "Ali Furkan YILDIZ",
+  "license": "MIT",
+  "dependencies": {
+    "discord-webhook-node": "^1.1.8",
+    "mineflayer": "^2.40.1"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uAliFurkanY/minecraft-discord-bridge.git"
+  },
+  "keywords": [
+    "bridge",
+    "minecraft",
+    "discord"
+  ],
+  "bugs": {
+    "url": "https://github.com/uAliFurkanY/minecraft-discord-bridge/issues"
+  },
+  "homepage": "https://github.com/uAliFurkanY/minecraft-discord-bridge#readme"
 }

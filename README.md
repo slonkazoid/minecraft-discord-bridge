@@ -1,3 +1,8 @@
-# apebot-mc
+# minecraft-discord-bridge
 
-Jungle SMP private bot.
+A Minecraft to Discord bridge.
+
+### TODO
+
+-   Skins
+-   Auto reconnect
