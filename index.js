@@ -2,21 +2,50 @@
 const { Webhook, MessageBuilder } = require("discord-webhook-node");
 const hook = new Webhook(process.env.HOOK);
 const mineflayer = require("mineflayer");
+const { parse } = require("path");
 const bot = mineflayer.createBot({
 	host: process.env.HOST,
 	username: process.env.USER,
 	password: process.env.PASS,
 });
+
+function setSystem() {
+	hook.setAvatar();
+	hook.setUsername("<SYSTEM>");
+}
+function unsafe_parse(json) {
+	let data;
+	try {
+		data = JSON.parse(json);
+	} catch {}
+	return data;
+}
+
 const rl = require("readline").createInterface({ input: process.stdin, output: process.stdout });
-bot.once("login", () => console.log("LOGGED IN"));
+bot.once("login", () => {
+	console.log("LOGGED IN");
+	setSystem();
+	hook.send("Logged in to " + process.env.HOST);
+});
 bot.once("spawn", onSpawn);
-bot.once("end", onEnd);
+bot.once("end", () => {
+	console.log("BOT END");
+	setSystem();
+	hook.send("Bot End");
+	process.exit();
+});
 bot.on("error", (err) => console.error(err));
-bot.once("kicked", (reason) => console.log(reason));
+bot.once("kicked", (reason) => {
+	console.log(reason);
+	setSystem();
+	hook.send(`Bot Kicked for reason: ${unsafe_parse(reason)?.text || reason}`);
+});
 console.log("BOT STARTED");
 
 async function onSpawn() {
 	console.log("BOT SPAWNED");
+	hook.setUsername("<SYSTEM>");
+	hook.send("Bot Spawned");
 	rl.on("line", bot.chat);
 	bot.on("chat", async (u, s) => {
 		let player = bot.players[u];
@@ -29,7 +58,4 @@ async function onSpawn() {
 		hook.setUsername(u);
 		hook.send(filtered);
 	});
-}
-function onEnd() {
-	console.log("BOT END");
 }
