@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+require("dotenv").config();
 const mineflayer = require("mineflayer");
 const bot = mineflayer.createBot({
 	host: process.env.HOST,
