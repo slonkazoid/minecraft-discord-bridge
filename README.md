@@ -6,3 +6,4 @@ A Minecraft to Discord bridge.
 
 -   Skins
 -   Auto reconnect
+-   Join and leave messges
