@@ -1,13 +1,12 @@
 #!/usr/bin/env node
-const { Webhook, MessageBuilder } = require("discord-webhook-node");
-const hook = new Webhook(process.env.HOOK);
 const mineflayer = require("mineflayer");
-const { parse } = require("path");
 const bot = mineflayer.createBot({
 	host: process.env.HOST,
 	username: process.env.USER,
 	password: process.env.PASS,
 });
+const { Webhook, MessageBuilder } = require("discord-webhook-node");
+const hook = new Webhook(process.env.HOOK);
 
 function setSystem() {
 	hook.setAvatar();
@@ -20,6 +19,9 @@ function unsafe_parse(json) {
 	} catch {}
 	return data;
 }
+
+setSystem();
+hook.send("Starting Bot");
 
 const rl = require("readline").createInterface({ input: process.stdin, output: process.stdout });
 bot.once("login", () => {
