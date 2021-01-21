@@ -11,8 +11,8 @@ const rl = require("readline").createInterface({ input: process.stdin, output: p
 bot.once("login", () => console.log("LOGGED IN"));
 bot.once("spawn", onSpawn);
 bot.once("end", onEnd);
-bot.on("error", console.error);
-bot.once("kicked", console.log);
+bot.on("error", (err) => console.error(err));
+bot.once("kicked", (reason) => console.log(reason));
 console.log("BOT STARTED");
 
 function onSpawn() {
