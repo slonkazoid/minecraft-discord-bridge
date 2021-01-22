@@ -65,8 +65,6 @@ async function onSpawn() {
 	});
 	bot.on("playerLeft", async (p) => {
 		console.log("[-] " + p.username);
-		hook.send(
-			userEmbed(p.uuid, p.username).setDescription("left the game.").setColor(0xff0000)
-		);
+		hook.send(userEmbed(p).setDescription("left the game.").setColor(0xff0000));
 	});
 }
