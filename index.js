@@ -3,7 +3,7 @@ require("dotenv").config();
 const mineflayer = require("mineflayer");
 const bot = mineflayer.createBot({
 	host: process.env.HOST,
-	username: process.env.USER,
+	username: process.env.USERNAME,
 	password: process.env.PASS,
 });
 const { Webhook, MessageBuilder } = require("discord-webhook-node");
