@@ -13,8 +13,11 @@ const hook = new Webhook(process.env.HOOK);
 	hook.setAvatar();
 	hook.setUsername("<SYSTEM>");
 }*/
-function userEmbed(uuid, username = bot.players[uuid].username) {
-	return new MessageBuilder().setAuthor(username, `https://mc-heads.net/avatar/${uuid}/512`);
+function userEmbed(player = bot.player) {
+	return new MessageBuilder().setAuthor(
+		player.username,
+		`https://mc-heads.net/avatar/${player.uuid}/512`
+	);
 }
 function unsafe_parse(json) {
 	let data;
@@ -35,7 +38,6 @@ bot.once("spawn", onSpawn);
 bot.once("end", () => {
 	console.log("BOT END");
 	hook.send("Bot End");
-	process.exit();
 });
 bot.on("error", (err) => console.error(err));
 bot.once("kicked", (reason) => {
@@ -55,13 +57,11 @@ async function onSpawn() {
 			//.replace(/(@everyone)|(@here)|(<@.{0,1}[0-9]{18}>)/g, "[PING]")
 			.substr(0, 2000);
 		console.log(u, s);
-		hook.send(userEmbed(player.uuid, u).setDescription(filtered).setColor(0x00ffff));
+		hook.send(userEmbed(player).setDescription(filtered).setColor(0x00ffff));
 	});
 	bot.on("playerJoined", async (p) => {
 		console.log("[+] " + p.username);
-		hook.send(
-			userEmbed(p.uuid, p.username).setDescription("joined the game.").setColor(0x00ff00)
-		);
+		hook.send(userEmbed(p).setDescription("joined the game.").setColor(0x00ff00));
 	});
 	bot.on("playerLeft", async (p) => {
 		console.log("[-] " + p.username);
