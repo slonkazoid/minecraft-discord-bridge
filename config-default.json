@@ -1,0 +1,26 @@
+{
+	"hooks": {
+		"testingHook": "https://discord.com/api/webhooks/111111111111111111/xxxxxxxx"
+	},
+	"servers": {
+		"testingServer": {
+			"host": "localhost",
+			"port": null,
+			"version": null
+		}
+	},
+	"bots": [
+		{
+			"username": "BridgeBot",
+			"password": null,
+			"server": "testingServer",
+			"webhook": "testingHook",
+			"autoReconnect": false
+		}
+	],
+	"options": {
+		"autoReconnect": false,
+		"daemonize": false,
+		"shell": true
+	}
+}

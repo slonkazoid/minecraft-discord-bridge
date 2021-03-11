@@ -14,11 +14,10 @@ cd minecraft-discord-bridge
 npm i
 ```
 
-### Setting up environment variables
+### Configuration
 
-1.  Copy `.env-default` as `.env`
-2.  Fill out the details
-3.  Done
+Copy `config-default.json` to `config.json` and fill in the details.  
+For more information, see [Configuration Documentation](/CONFIG.md) for more information.
 
 ## Running the Bot
 
@@ -29,8 +28,8 @@ node .
 
 ## TODO
 
--   [x] Instructions
--   [x] Skins
--   [ ] Auto reconnect
-    -   [ ] With session storing
--   [ ] Join and leave messages
+- [x] Instructions
+- [x] Skins
+- [ ] Auto reconnect
+  - [ ] With session storing
+- [x] Join and leave messages
