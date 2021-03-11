@@ -14,12 +14,17 @@
 			"username": "BridgeBot",
 			"password": null,
 			"server": "testingServer",
-			"webhook": "testingHook",
-			"autoReconnect": false
+			"webhook": "testingHook"
 		}
 	],
+	"global": {
+		"reconnectDelay": 5000,
+		"setNameToServer": false,
+		"messageType": "embed",
+		"storeSession": true
+	},
 	"options": {
-		"autoReconnect": false,
+		"debug": false,
 		"daemonize": false,
 		"shell": true
 	}

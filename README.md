@@ -17,7 +17,7 @@ npm i
 ### Configuration
 
 Copy `config-default.json` to `config.json` and fill in the details.  
-For more information, see [Configuration Documentation](/CONFIG.md) for more information.
+For more information, see `CONFIG.md` for more information.
 
 ## Running the Bot
 
