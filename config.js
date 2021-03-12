@@ -1,6 +1,7 @@
 const { Webhook } = require("discord-webhook-node");
 const { existsSync } = require("fs");
 const { join } = require("path");
+const { log, progress } = require("./logging");
 if (!existsSync(join(__dirname, "./config.json"))) {
 	throw new Error(
 		"Configuration file not found. Please consult the README.md file."
@@ -8,16 +9,32 @@ if (!existsSync(join(__dirname, "./config.json"))) {
 }
 
 /**
- * @typedef {Object} Bot
+ * @typedef {Object} BotReference
  * @property {String} username
- * @property {String|null} password
- * @property {Boolean} autoReconnect
+ * @property {String|null} [password]
+ * @property {Boolean} [autoReconnect]
  * @property {Object} server
+ * @property {String} webhook
+ * @property {Boolean} [setNameToServer]
+ * @property {String} [messageType]
+ * @property {Boolean} [storeSession]
+ *
+ * @typedef {Object} LoginInfo
+ * @property {String} username
+ * @property {String|Boolean} password
  * @property {String} host
  * @property {Number} port
- * @property {String} webhook
+ * @property {String|Boolean} version
+ *
+ * @typedef {Object} Bot
+ * @property {LoginInfo} login
+ * @property {Boolean} autoReconnect
+ * @property {String} host
+ * @property {Number} port
+ * @property {Webhook} webhook
  * @property {Boolean} setNameToServer
  * @property {String} messageType
+ * @property {Boolean} storeSession
  *
  * @typedef {Object} Options
  * @property {Boolean} debug
@@ -27,15 +44,28 @@ if (!existsSync(join(__dirname, "./config.json"))) {
  * @typedef {Object} Config
  * @property {Object} hooks
  * @property {Object} servers
- * @property {Bot[]} bots
- * @property {Bot} global
+ * @property {BotReference[]} bots
+ * @property {BotReference} global
  * @property {Options} options
  */
+
+log("Loading configuration...");
 
 /**
  * @type {Config}
  */
 const conf = require("./config.json");
+
+/**
+ * @type {Options}
+ */
+let options = {};
+options.debug = conf.options?.debug || false;
+options.debug = conf.options?.daemonize || false;
+options.debug = conf.options?.shell || true;
+global.debug = options.debug;
+// Debug messages will work after this point
+
 if (
 	!conf.hooks ||
 	!(conf.hooks instanceof Object) ||
@@ -51,22 +81,24 @@ if (
 if (!conf.bots || !(conf.bots instanceof Array) || conf.bots?.length === 0)
 	throw new Error("No bots found.");
 
-let hooks = {};
-for (key in conf.hooks) {
+progress("Loading Webhooks...");
+let hooks = Object.keys(conf.hooks).map((key, idx, arr) => {
 	if (conf.hooks.hasOwnProperty(key)) {
-		let hook = conf.keys[key];
+		let hook = conf.hooks[key];
 		if (
 			typeof hook !== "string" ||
 			!hook.match(/https:\/\/discord.com\/api\/webhooks\/\d{18}\/[\w-]{68}/)
 		)
 			throw new Error("Invalid webhook " + key + ".");
 		try {
-			hooks[key] = new Webhook(hook);
+			progress(`Loading Webhooks... ${key} (${idx}/${arr.length})`);
+			return new Webhook(hook);
 		} catch {
 			throw new Error("Invalid webhook " + key + ".");
 		}
 	}
-}
+});
+progress("Loading Webhooks... Done!", true);
 
 let servers = {};
 for (key in conf.servers) {
@@ -79,15 +111,19 @@ for (key in conf.servers) {
 }
 
 /**
- * @param {Bot} bot
+ * @param {BotReference} _bot
+ * @returns {Bot}
  */
-function parseBot(bot) {
-	bot.username = bot.username || conf.global.username;
-	bot.password = bot.password || conf.global.password;
+function parseBot(_bot) {
+	let bot = Object.assign({}, _bot);
 	let server = servers[bot.server] || servers[conf.global.server];
-	bot.host = server.host;
-	bot.port = server.port || 25565;
-	bot.version = server.version || false;
+	bot.login = {
+		username: bot.username || conf.global.username,
+		password: bot.password || conf.global.password || false,
+		host: server.host,
+		port: server.port || 25565,
+		version: server.version || false,
+	};
 	delete bot.server;
 	bot.webhook = bot.webhook || conf.global.webhook;
 	bot.autoReconnect = bot.autoReconnect || conf.global.autoReconnect || true;
@@ -96,8 +132,10 @@ function parseBot(bot) {
 		bot.setNameToServer || conf.global.setNameToServer || false;
 	bot.messageType = bot.messageType || conf.global.messageType || "embed";
 	bot.storeSession = bot.storeSession || conf.global.storeSession || true;
-	if (!bot.username || !bot.server || !bot.webhook)
+	if (!bot.login.username || !bot.login.host || !bot.webhook)
 		throw new Error("Invalid bot object");
+	log("Parsed bot", true);
+	log(bot, true);
 	return bot;
 }
 
@@ -106,15 +144,8 @@ function parseBot(bot) {
  */
 let bots = conf.bots.map(parseBot);
 
-/**
- * @type {Options}
- */
-let options = {};
-options.debug = conf.options?.debug || false;
-options.debug = conf.options?.daemonize || false;
-options.debug = conf.options?.shell || true;
-
 module.exports = {
 	bots: bots,
 	options: conf.options,
 };
+log("Loading configuration... Done!");
