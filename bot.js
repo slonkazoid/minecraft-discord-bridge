@@ -1,5 +1,6 @@
-if (!process.send) {
-	console.log("This process must be forked with child_process.");
+const { parentPort } = require("worker_threads");
+if (!parentPort) {
+	console.log("This process must be ran as a worker thread.");
 	process.exit();
 }
 const { MessageBuilder, Webhook } = require("discord-webhook-node");
@@ -18,7 +19,7 @@ const TEXT_MAXLEN = 2048;
  * @param {Boolean} [debug]
  */
 function logAs(message, debug = false) {
-	process.send({
+	parentPort.postMessage({
 		type: "log",
 		debug: debug,
 		message: message,
@@ -29,7 +30,7 @@ function logAs(message, debug = false) {
  * @returns {String}
  */
 function getAvatar(uuid) {
-	return `https://mc-heads.net/avatar/${player.uuid}/512`;
+	return `https://mc-heads.net/avatar/${uuid}/512`;
 }
 /**
  * @param {mineflayer.Player} player
@@ -73,38 +74,39 @@ function getText(o) {
 	else return o;
 }
 
-process.once(
+parentPort.once(
 	"message",
 	/** @param {import("./config").Bot} botConfig */ botConfig => {
-		let hook = botConfig.webhook;
+		let hook = require("./webhooks")(botConfig.webhook);
+		console.log(hook.send);
 		const bot = mineflayer.createBot(botConfig.login);
 		if (botConfig.storeSession)
 			bot._client.once("session", s => {
-				process.send({ type: "session", session: s });
+				parentPort.postMessage({ type: "session", session: s });
 			});
 		bot.once("login", () => {
-			process.send({ type: "login" });
-			hook.send("Logged in to " + process.env.HOST);
+			parentPort.postMessage({ type: "login" });
+			hook.send("Logged in to " + botConfig.host + ":" + botConfig.port);
 		});
 		bot.once("spawn", () => {
-			process.send({ type: "spawn" });
+			parentPort.postMessage({ type: "spawn" });
 			hook.send("Bot Spawned");
 		});
 		bot.once("end", () => {
-			process.send({ type: "end" });
+			parentPort.postMessage({ type: "end" });
 			hook.send("Bot Ended");
 			process.exit();
 		});
 		bot.on("error", err => console.error(err));
 		bot.once("kicked", reason => {
-			process.send({ type: "kicked", reason: getText(reason) });
+			parentPort.postMessage({ type: "kicked", reason: getText(reason) });
 			hook.send(
 				`Bot Kicked for reason: ${getText(reason)}`.substring(0, TEXT_MAXLEN)
 			);
 		});
 
 		bot.on("playerJoined", async p => {
-			process.send({ type: "join", username: p.username });
+			parentPort.postMessage({ type: "join", username: p.username });
 			if (botConfig.messageType === "embed")
 				hook.send(
 					userEmbed(p).setDescription("Joined the game").setColor(COLORS.join)
@@ -116,7 +118,7 @@ process.once(
 			}
 		});
 		bot.on("playerLeft", async p => {
-			process.send({ type: "leave", username: p.username });
+			parentPort.postMessage({ type: "leave", username: p.username });
 			if (botConfig.messageType === "embed")
 				hook.send(
 					userEmbed(p).setDescription("Left the game").setColor(COLORS.leave)
@@ -130,7 +132,7 @@ process.once(
 		bot.on("chat", async (u, s) => {
 			let player = bot.players[u];
 			if (!player) return;
-			process.send({ type: "chat", username: u, message: s });
+			parentPort.postMessage({ type: "chat", username: u, message: s });
 			if (botConfig.messageType === "embed")
 				hook.send(
 					userEmbed(player)
@@ -142,5 +144,31 @@ process.once(
 				hook.send(s.substring(0, TEXT_MAXLEN));
 			}
 		});
+		process.on(
+			"message",
+			/** @param {import(".").ServerMessage} m */ m => {
+				if (typeof m === "object")
+					switch (m) {
+						case "chat":
+							bot.chat(m.message);
+							break;
+						case "list":
+							parentPort.postMessage("message", {
+								type: "list",
+								players: bot.players.map(p => p.username),
+							});
+							break;
+						case "ping":
+							if (m.player)
+								parentPort.postMessage({
+									type: "ping",
+									value: m.player
+										? bot.players[m.player]?.ping || 0
+										: bot.player.ping,
+								});
+							break;
+					}
+			}
+		);
 	}
 );

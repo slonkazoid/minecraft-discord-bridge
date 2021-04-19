@@ -1,4 +1,3 @@
-const { Webhook } = require("discord-webhook-node");
 const { existsSync } = require("fs");
 const { join } = require("path");
 const { log, progress } = require("./logging");
@@ -31,7 +30,7 @@ if (!existsSync(join(__dirname, "./config.json"))) {
  * @property {Boolean} autoReconnect
  * @property {String} host
  * @property {Number} port
- * @property {Webhook} webhook
+ * @property {String} webhook
  * @property {Boolean} setNameToServer
  * @property {String} messageType
  * @property {Boolean} storeSession
@@ -81,25 +80,6 @@ if (
 if (!conf.bots || !(conf.bots instanceof Array) || conf.bots?.length === 0)
 	throw new Error("No bots found.");
 
-progress("Loading Webhooks...");
-let hooks = Object.keys(conf.hooks).map((key, idx, arr) => {
-	if (conf.hooks.hasOwnProperty(key)) {
-		let hook = conf.hooks[key];
-		if (
-			typeof hook !== "string" ||
-			!hook.match(/https:\/\/discord.com\/api\/webhooks\/\d{18}\/[\w-]{68}/)
-		)
-			throw new Error("Invalid webhook " + key + ".");
-		try {
-			progress(`Loading Webhooks... ${key} (${idx}/${arr.length})`);
-			return new Webhook(hook);
-		} catch {
-			throw new Error("Invalid webhook " + key + ".");
-		}
-	}
-});
-progress("Loading Webhooks... Done!", true);
-
 let servers = {};
 for (key in conf.servers) {
 	if (conf.servers.hasOwnProperty(key)) {
@@ -125,17 +105,17 @@ function parseBot(_bot) {
 		version: server.version || false,
 	};
 	delete bot.server;
-	bot.webhook = bot.webhook || conf.global.webhook;
+	bot.webhook = conf.hooks[bot.webhook] || conf.hooks[conf.global.webhook];
 	bot.autoReconnect = bot.autoReconnect || conf.global.autoReconnect || true;
 	bot.reconnectDelay = bot.reconnectDelay || conf.global.reconnectDelay || 5000;
 	bot.setNameToServer =
 		bot.setNameToServer || conf.global.setNameToServer || false;
 	bot.messageType = bot.messageType || conf.global.messageType || "embed";
 	bot.storeSession = bot.storeSession || conf.global.storeSession || true;
+	console.log(bot.webhook.send);
 	if (!bot.login.username || !bot.login.host || !bot.webhook)
 		throw new Error("Invalid bot object");
 	log("Parsed bot", true);
-	log(bot, true);
 	return bot;
 }
 
